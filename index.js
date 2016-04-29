@@ -26,7 +26,15 @@ function reporter(opts) {
 			JSON.stringify(masterResults, null, options.indentationLevel) :
 			JSON.stringify(masterResults);
 
-		fs.writeFileSync(options.file, resultsOutput);
+		// 支持自动自增文件名 - 主要是为了处理并发运行多个suite的情况
+		var n = 1;
+		var newFile = options.file;
+		while(fs.existsSync(newFile)) {
+			newFile = options.file.replace('.json', '-' + n + '.json');
+			n++;
+		}
+
+		fs.writeFileSync(newFile, resultsOutput);
 	};
 };
 
